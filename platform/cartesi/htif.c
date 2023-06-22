@@ -91,8 +91,6 @@ int cartesi_htif_system_reset_init()
 
 uint64_t sbi_system_yield(uint64_t cmd_data)
 {
-	sbi_exit(sbi_scratch_thishart_ptr());
-
 	htif->fromhost = 0;
 	htif->tohost = TOHOST_DEV(2) | TOHOST_CMD_DATA(cmd_data);
 	return htif->fromhost;
