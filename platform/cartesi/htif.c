@@ -77,6 +77,12 @@ static void cartesi_htif_system_reset(u32 type, u32 reason)
 	}
 }
 
+void __attribute__((noreturn)) sbi_hart_hang(void)
+{
+	cartesi_htif_system_reset(SBI_SRST_RESET_TYPE_SHUTDOWN, SBI_SRST_RESET_REASON_SYSFAIL);
+	__builtin_unreachable();
+}
+
 struct sbi_system_reset_device cartesi_reset = {
 	.name = "htif",
 	.system_reset_check = cartesi_htif_system_reset_check,
