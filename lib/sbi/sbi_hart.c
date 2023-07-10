@@ -743,7 +743,7 @@ int sbi_hart_init(struct sbi_scratch *scratch, bool cold_boot)
 	return sbi_hart_reinit(scratch);
 }
 
-void __attribute__((noreturn)) sbi_hart_hang(void)
+void __attribute__((noreturn, weak)) sbi_hart_hang(void)
 {
 	while (1)
 		wfi();
