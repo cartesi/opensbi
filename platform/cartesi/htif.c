@@ -16,6 +16,8 @@
 #define HTIF_DEV_SYSTEM		0
 #define HTIF_DEV_CONSOLE	1
 
+#define HTIF_SYSTEM_CMD_HALT    0
+
 #define HTIF_CONSOLE_CMD_GETC	0
 #define HTIF_CONSOLE_CMD_PUTC	1
 
@@ -42,7 +44,7 @@ static void cartesi_htif_putc(char ch)
 {
 	htif->fromhost = 0;
 	htif->tohost = TOHOST_DEV_CMD_DATA(HTIF_DEV_CONSOLE, HTIF_CONSOLE_CMD_PUTC, ch);
-	(void)htif->fromhost;
+	(void)htif->fromhost; // read and discard the value
 }
 
 static int cartesi_htif_getc(void)
@@ -71,9 +73,15 @@ static int cartesi_htif_system_reset_check(u32 type, u32 reason)
 
 static void cartesi_htif_system_reset(u32 type, u32 reason)
 {
+	/* we can fit 48bits of data into HTIF, 47 because lsb has to be 1 for shutdown.
+	 * arbitrarily take 15 from type and the rest (32) from reason. */
+	uint64_t data = ((uint64_t)(type   & 0x00007FFFu) << 33u)
+		      | ((uint64_t)(reason & 0xFFFFFFFFu) <<  1u)
+		      |  (uint64_t)1u;
+
 	while (1) {
 		htif->fromhost = 0;
-		htif->tohost = 1;
+		htif->tohost = TOHOST_DEV_CMD_DATA(HTIF_DEV_SYSTEM, HTIF_SYSTEM_CMD_HALT, data);
 	}
 }
 

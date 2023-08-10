@@ -108,8 +108,7 @@ static int sbi_ecall_legacy_handler(unsigned long extid, unsigned long funcid,
 		}
 		break;
 	case SBI_EXT_0_1_SHUTDOWN:
-		sbi_system_reset(SBI_SRST_RESET_TYPE_SHUTDOWN,
-				 SBI_SRST_RESET_REASON_NONE);
+		sbi_system_reset(regs->a0, regs->a1);
 		break;
 	case SBI_EXT_0_1_YIELD:
 		*out_val = sbi_system_yield(regs->a0);
