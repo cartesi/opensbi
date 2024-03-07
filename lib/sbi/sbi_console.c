@@ -40,8 +40,6 @@ int sbi_getc(void)
 void sbi_putc(char ch)
 {
 	if (console_dev && console_dev->console_putc) {
-		if (ch == '\n')
-			console_dev->console_putc('\r');
 		console_dev->console_putc(ch);
 	}
 }
